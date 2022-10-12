@@ -54,8 +54,21 @@ class CtUser {
 
   static async addUser(req, res) {
     try {
-      const { u_firstname, u_lastname, u_email, u_password, u_role } = req.body;
-      if (!u_firstname || !u_lastname || !u_email || !u_password) {
+      const {
+        u_firstname,
+        u_lastname,
+        u_email,
+        u_password,
+        u_role,
+        u_location,
+      } = req.body;
+      if (
+        !u_firstname ||
+        !u_lastname ||
+        !u_email ||
+        !u_password ||
+        (u_role === "barber" && !u_location)
+      ) {
         return res.status(400).json("Please provide all fields");
       }
       const emailExists = await srCheckIfEmailExists(u_email);
@@ -65,7 +78,24 @@ class CtUser {
       const newUser = await pool.query(
         `INSERT INTO users (u_firstname, u_lastname, u_email, u_password, u_role) VALUES ('${u_firstname}', '${u_lastname}', '${u_email}', '${u_password}', '${u_role}') RETURNING *`
       );
+      if (u_role === "barber" && u_location) {
+        await pool.query(
+          `INSERT INTO barber_info (b_id, b_status, b_city) VALUES ('${newUser.rows[0].u_id}', 'available', '${u_location}') RETURNING *`
+        );
+      }
       res.json(newUser.rows[0]);
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+
+  static async getUserInfo(req, res) {
+    try {
+      const { u_email } = req.params;
+      const user = await pool.query(
+        `SELECT * FROM users WHERE u_email = '${u_email}'`
+      );
+      res.json(user.rows[0]);
     } catch (err) {
       console.error(err.message);
     }
