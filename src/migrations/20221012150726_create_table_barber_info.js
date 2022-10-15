@@ -12,6 +12,7 @@ exports.up = function (knex) {
       table.uuid("b_id").references("u_id").inTable("users").notNullable();
       table.string("b_status").notNullable();
       table.string("b_city").notNullable();
+      table.string("b_shop_name").notNullable();
     });
 };
 

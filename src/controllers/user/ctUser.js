@@ -60,14 +60,15 @@ class CtUser {
         u_email,
         u_password,
         u_role,
-        u_location,
+        b_city,
+        b_shop_name,
       } = req.body;
       if (
         !u_firstname ||
         !u_lastname ||
         !u_email ||
         !u_password ||
-        (u_role === "barber" && !u_location)
+        (u_role === "barber" && (!b_city || !b_shop_name))
       ) {
         return res.status(400).json("Please provide all fields");
       }
@@ -78,9 +79,9 @@ class CtUser {
       const newUser = await pool.query(
         `INSERT INTO users (u_firstname, u_lastname, u_email, u_password, u_role) VALUES ('${u_firstname}', '${u_lastname}', '${u_email}', '${u_password}', '${u_role}') RETURNING *`
       );
-      if (u_role === "barber" && u_location) {
+      if (u_role === "barber" && b_city) {
         await pool.query(
-          `INSERT INTO barber_info (b_id, b_status, b_city) VALUES ('${newUser.rows[0].u_id}', 'available', '${u_location}') RETURNING *`
+          `INSERT INTO barber_info (b_id, b_status, b_city, b_shop_name) VALUES ('${newUser.rows[0].u_id}', 'available', '${b_city}', '${b_shop_name}') RETURNING *`
         );
       }
       res.json(newUser.rows[0]);

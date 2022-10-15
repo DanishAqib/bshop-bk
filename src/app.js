@@ -36,11 +36,12 @@ app.get("/users", async (req, res) => {
   }
 });
 
-app.post("/api/user", CtUser.userlogin);
-app.post("/api/user/add_user", CtUser.addUser);
-
 app.get("/api/user/get_user_info/:u_email", CtUser.getUserInfo);
 app.get("/api/barber/get_barber_info/:u_email", CtBarber.getBarberInfo);
+app.get("/api/barber/all_barbers", CtBarber.getAllBarbers);
+
+app.post("/api/user", CtUser.userlogin);
+app.post("/api/user/add_user", CtUser.addUser);
 
 app.put("/api/barber/update_status/:u_id", CtBarber.updateBarberStatus);
 app.put("/api/user/update_user_info/:u_id", CtUser.updateUserInfo);

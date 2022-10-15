@@ -1,6 +1,17 @@
 const pool = require("../../db");
 
 class CtBarber {
+  static async getAllBarbers(req, res) {
+    try {
+      const allBarbers = await pool.query(
+        `SELECT u_firstname, u_lastname, bi_id, b_id, b_city, b_status, b_shop_name FROM barber_info JOIN users ON barber_info.b_id = users.u_id`
+      );
+      res.json(allBarbers.rows);
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+
   static async updateBarberStatus(req, res) {
     try {
       const { u_id } = req.params;
