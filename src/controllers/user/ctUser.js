@@ -100,6 +100,31 @@ class CtUser {
       console.error(err.message);
     }
   }
+
+  static async updateUserInfo(req, res) {
+    try {
+      const { u_id } = req.params;
+      const user = await pool.query(
+        `SELECT * FROM users WHERE u_id = '${u_id}'`
+      );
+      if (user.rows.length === 0) {
+        return res.status(400).json("User does not exist");
+      }
+      const { u_firstname, u_lastname, u_password, b_city } =
+        req.body.u_info.u_info;
+      await pool.query(
+        `UPDATE users SET u_firstname = '${u_firstname}', u_lastname = '${u_lastname}', u_password = '${u_password}' WHERE u_id = '${u_id}'`
+      );
+      if (user.rows[0].u_role === "barber" && b_city) {
+        await pool.query(
+          `UPDATE barber_info SET b_city = '${b_city}' WHERE b_id = '${u_id}'`
+        );
+      }
+      res.json(user.rows[0]);
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
 }
 
 module.exports = CtUser;

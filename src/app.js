@@ -2,8 +2,8 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const pool = require("./db");
-const CtUser = require("./module/user/ctUser");
-const CtBarber = require("./module/barber/ctBarber");
+const CtUser = require("./controllers/user/ctUser");
+const CtBarber = require("./controllers/barber/ctBarber");
 
 const PORT = process.env.PORT || 8080;
 
@@ -38,5 +38,9 @@ app.get("/users", async (req, res) => {
 
 app.post("/api/user", CtUser.userlogin);
 app.post("/api/user/add_user", CtUser.addUser);
+
 app.get("/api/user/get_user_info/:u_email", CtUser.getUserInfo);
+app.get("/api/barber/get_barber_info/:u_email", CtBarber.getBarberInfo);
+
 app.put("/api/barber/update_status/:u_id", CtBarber.updateBarberStatus);
+app.put("/api/user/update_user_info/:u_id", CtUser.updateUserInfo);
