@@ -126,6 +126,30 @@ class CtUser {
       console.error(err.message);
     }
   }
+
+  static async makeAppointmentRequest(req, res) {
+    try {
+      const { u_id, b_id, uar_time, uar_services, uar_total_price } = req.body;
+      const user = await pool.query(
+        `SELECT * FROM users WHERE u_id = '${u_id}'`
+      );
+      if (user.rows.length === 0) {
+        return res.status(400).json("User does not exist");
+      }
+      const barber = await pool.query(
+        `SELECT * FROM users WHERE u_id = '${b_id}'`
+      );
+      if (barber.rows.length === 0) {
+        return res.status(400).json("Barber does not exist");
+      }
+      const newAppointment = await pool.query(
+        `INSERT INTO user_appointment_req (u_id, b_id, uar_time, uar_services, uar_total_price) VALUES ('${u_id}', '${b_id}', '${uar_time}', '${uar_services}', '${uar_total_price}') RETURNING *`
+      );
+      res.json(newAppointment.rows[0]);
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
 }
 
 module.exports = CtUser;
