@@ -200,21 +200,15 @@ class CtUser {
 
   static async cancelAppointmentRequest(req, res) {
     try {
-      const { u_id } = req.params;
-      const user = await pool.query(
-        `SELECT * FROM users WHERE u_id = '${u_id}'`
-      );
-      if (user.rows.length === 0) {
-        return res.status(400).json("User does not exist");
-      }
+      const { uar_id } = req.params;
       const appointments = await pool.query(
-        `SELECT * FROM user_appointment_req WHERE u_id = '${u_id}'`
+        `SELECT * FROM user_appointment_req WHERE uar_id = '${uar_id}'`
       );
       if (appointments.rows.length === 0) {
         return res.status(400).json("No appointments found");
       }
       await pool.query(
-        `DELETE FROM user_appointment_req WHERE u_id = '${u_id}'`
+        `DELETE FROM user_appointment_req WHERE uar_id = '${uar_id}'`
       );
       res.json("Appointment request deleted");
     } catch (err) {
