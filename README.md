@@ -1,6 +1,3 @@
-<!-- add readme file for backend -->
-<!-- project name book barber -->
-<!-- user can send request to selected barber, and if request gets approved it is shown on user side -->
 # Book Barber Backend
 
 ## About
