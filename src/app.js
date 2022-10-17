@@ -39,6 +39,8 @@ app.get("/users", async (req, res) => {
 app.get("/api/user/get_user_info/:u_email", CtUser.getUserInfo);
 app.get("/api/barber/get_barber_info/:u_email", CtBarber.getBarberInfo);
 app.get("/api/barber/all_barbers", CtBarber.getAllBarbers);
+app.get("/api/user/get_appointment/:u_id", CtUser.getUserAppointment);
+app.get("/api/user/check_appointment/:u_id", CtUser.checkIfAppointmentExists);
 
 app.post("/api/user", CtUser.userlogin);
 app.post("/api/user/add_user", CtUser.addUser);
@@ -46,3 +48,8 @@ app.post("/api/user/make_appointment", CtUser.makeAppointmentRequest);
 
 app.put("/api/barber/update_status/:u_id", CtBarber.updateBarberStatus);
 app.put("/api/user/update_user_info/:u_id", CtUser.updateUserInfo);
+
+app.delete(
+  "/api/user/cancel_appointment/:u_id",
+  CtUser.cancelAppointmentRequest
+);
