@@ -22,6 +22,11 @@ npm start
 
 ```
 
+<!-- add front end link -->
+## Front End
+
+The front end for this project can be found [here](https://github.com/DanishAqib/bshop-fe).
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
