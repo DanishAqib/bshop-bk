@@ -90,6 +90,25 @@ class CtUser {
     }
   }
 
+  static async updateUserPassword(req, res) {
+    try {
+      const { u_email, u_password } = req.body;
+      if (!u_email || !u_password) {
+        return res.status(400).json("Please provide all credentials");
+      }
+      const userExists = await srCheckIfEmailExists(u_email);
+      if (userExists) {
+        return res.status(400).json("Email does not exist");
+      }
+      const updatedUser = await pool.query(
+        `UPDATE users SET u_password = '${u_password}' WHERE u_email = '${u_email}' RETURNING *`
+      );
+      res.json(updatedUser.rows[0]);
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+
   static async getUserInfo(req, res) {
     try {
       const { u_email } = req.params;
