@@ -16,6 +16,7 @@ exports.up = function (knex) {
       table.string("uar_total_price").notNullable();
       table.string("uar_status").defaultTo("pending");
       table.timestamp("uar_created_at").defaultTo(knex.fn.now());
+      table.timestamp("uar_updated_at").defaultTo(knex.fn.now());
     });
 };
 

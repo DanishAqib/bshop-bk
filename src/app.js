@@ -45,6 +45,10 @@ app.get(
   "/api/barber/all_appointment_requests/:u_id/:uar_status",
   CtBarber.getAllAppointmentRequestsForBarber
 );
+app.get(
+  "/api/user/all_appointment_requests/:u_id/:uar_status",
+  CtUser.getAllAppointmentRequests
+);
 
 app.post("/api/user", CtUser.userlogin);
 app.post("/api/user/add_user", CtUser.addUser);

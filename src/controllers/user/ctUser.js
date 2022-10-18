@@ -155,7 +155,7 @@ class CtUser {
     try {
       const { u_id } = req.params;
       const appointment = await pool.query(
-        `SELECT * FROM user_appointment_req WHERE u_id = '${u_id}'`
+        `SELECT * FROM user_appointment_req WHERE u_id = '${u_id}' AND uar_status = 'pending'`
       );
       if (appointment.rows.length === 0) {
         return res.status(200).json(false);
@@ -176,7 +176,7 @@ class CtUser {
         return res.status(400).json("User does not exist");
       }
       const appointments = await pool.query(
-        `SELECT * FROM user_appointment_req WHERE u_id = '${u_id}'`
+        `SELECT * FROM user_appointment_req WHERE u_id = '${u_id}' AND uar_status != 'completed'`
       );
       if (appointments.rows.length === 0) {
         return res.status(400).json("No appointments found");
@@ -211,6 +211,51 @@ class CtUser {
         `DELETE FROM user_appointment_req WHERE uar_id = '${uar_id}'`
       );
       res.json("Appointment request deleted");
+    } catch (err) {
+      console.error(err.message);
+    }
+  }
+
+  static async getAllAppointmentRequests(req, res) {
+    try {
+      const { u_id, uar_status } = req.params;
+      const appointments = await pool.query(
+        `SELECT * FROM user_appointment_req WHERE u_id = '${u_id}' AND uar_status = '${uar_status}'`
+      );
+      if (appointments.rows.length === 0) {
+        return res.status(400).json("No appointments found");
+      }
+      const barberIds = appointments.rows.map(
+        (appointment) => appointment.b_id
+      );
+      const barbers = barberIds.map(async (barberId) => {
+        const barber = await pool.query(
+          `SELECT u_id, u_firstname, u_lastname FROM users WHERE u_id = '${barberId}'`
+        );
+        return barber.rows[0];
+      });
+      const barbersData = await Promise.all(barbers);
+      const barberInfo = barberIds.map(async (barberId) => {
+        const barber = await pool.query(
+          `SELECT bi_id, b_id, b_shop_name FROM barber_info WHERE b_id = '${barberId}'`
+        );
+        return barber.rows[0];
+      });
+      const barberInfoData = await Promise.all(barberInfo);
+      const appointmentRequests = appointments.rows.map((appointment) => {
+        const barber = barbersData.find(
+          (barber) => barber.u_id === appointment.b_id
+        );
+        const barberInfo = barberInfoData.find(
+          (barber) => barber.b_id === appointment.b_id
+        );
+        return {
+          ...appointment,
+          barber,
+          barberInfo,
+        };
+      });
+      res.json(appointmentRequests);
     } catch (err) {
       console.error(err.message);
     }
