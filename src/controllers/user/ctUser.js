@@ -195,23 +195,15 @@ class CtUser {
         return res.status(400).json("User does not exist");
       }
       const appointments = await pool.query(
-        `SELECT * FROM user_appointment_req WHERE u_id = '${u_id}' AND uar_status != 'completed'`
+        `SELECT * FROM user_appointment_req INNER JOIN 
+          barber_info ON user_appointment_req.b_id = barber_info.b_id 
+          INNER JOIN users ON user_appointment_req.b_id = users.u_id 
+          WHERE user_appointment_req.u_id = '${u_id}' AND user_appointment_req.uar_status != 'completed'`
       );
       if (appointments.rows.length === 0) {
         return res.status(400).json("No appointments found");
       }
-      const barber_info = await pool.query(
-        `SELECT * FROM barber_info WHERE b_id = '${appointments.rows[0].b_id}'`
-      );
-      const barber = await pool.query(
-        `SELECT * FROM users WHERE u_id = '${appointments.rows[0].b_id}'`
-      );
-      const appointmentRequest = {
-        ...appointments.rows[0],
-        barber_info: barber_info.rows[0],
-        barber: barber.rows[0],
-      };
-      res.json(appointmentRequest);
+      res.json(appointments.rows);
     } catch (err) {
       console.error(err.message);
     }
